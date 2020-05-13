@@ -1,0 +1,1 @@
+smagribot-firmware-device-dotnet
