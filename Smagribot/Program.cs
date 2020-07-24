@@ -103,12 +103,21 @@ namespace Smagribot
                 .As<ICommunicationService>()
                 .SingleInstance();
 
-            var azureIotHubConnectionString = Environment.GetEnvironmentVariable("AzureIotHubConnectionString");
-            builder.RegisterType<AzureIoTHubCloudService>()
-                .WithParameter("connectionString", azureIotHubConnectionString)
-                .As<ICloudService>()
-                .SingleInstance();
-            
+            if (Environment.GetEnvironmentVariable("IsEdgeDevice") != null)
+            {
+                builder.RegisterType<AzureIoTEdgeService>()
+                    .As<ICloudService>()
+                    .SingleInstance();
+            }
+            else
+            {
+                var azureIotHubConnectionString = Environment.GetEnvironmentVariable("AzureIotHubConnectionString");
+                builder.RegisterType<AzureIoTHubService>()
+                    .WithParameter("connectionString", azureIotHubConnectionString)
+                    .As<ICloudService>()
+                    .SingleInstance();
+            }
+
             if (bool.TryParse(Environment.GetEnvironmentVariable("UseDeviceMock"), out var useMockedDevice) && useMockedDevice)
             {
                 logger.LogInformation("UseDeviceMock found! Setting up Mocked Device!");
@@ -204,6 +213,11 @@ namespace Smagribot
 
             builder.RegisterInstance(mockedDeviceMock.Object)
                 .As<IDeviceService>();
+        }
+
+        private static void SetupRaspberryPiSensorConfiguration()
+        {
+            var config = new SensorConfiguration {FillSensorPin = 17};
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Smagribot.Services.Utils
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     FileName = _pathToArduinoCli,
-                    Arguments = $"upload -p {port} -b {fqbn} -i {pathToFirmware} -t"
+                    Arguments = $"upload -p {port} -b {fqbn} -t {pathToFirmware}"
                 };
                 var process = new Process
                 {
