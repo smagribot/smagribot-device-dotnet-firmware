@@ -1,9 +1,13 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smagribot", "Smagribot\Smagribot.csproj", "{92629E42-0E99-4C21-B546-952471C32669}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smagribot", "modules\Smagribot\Smagribot.csproj", "{92629E42-0E99-4C21-B546-952471C32669}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{107D6D01-C3DD-47EA-ACB1-7DD84CC129C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smagribot.Tests", "Smagribot.Tests\Smagribot.Tests.csproj", "{107D6D01-C3DD-47EA-ACB1-7DD84CC129C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camera", "modules\Camera\Camera.csproj", "{0582728D-189B-4576-8123-BF38B1CD684F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camera.Tests", "Camera.Tests\Camera.Tests.csproj", "{4EE19289-4805-4A54-8C93-3F39D575DEDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,5 +23,13 @@ Global
 		{107D6D01-C3DD-47EA-ACB1-7DD84CC129C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{107D6D01-C3DD-47EA-ACB1-7DD84CC129C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{107D6D01-C3DD-47EA-ACB1-7DD84CC129C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0582728D-189B-4576-8123-BF38B1CD684F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0582728D-189B-4576-8123-BF38B1CD684F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0582728D-189B-4576-8123-BF38B1CD684F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0582728D-189B-4576-8123-BF38B1CD684F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EE19289-4805-4A54-8C93-3F39D575DEDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EE19289-4805-4A54-8C93-3F39D575DEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EE19289-4805-4A54-8C93-3F39D575DEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EE19289-4805-4A54-8C93-3F39D575DEDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

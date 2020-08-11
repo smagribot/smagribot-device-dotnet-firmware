@@ -4,6 +4,11 @@
 
 bin/
 obj/
+out/
+**/bin
+**/obj
+**/out
+
 
 node_modules/
 
@@ -22,3 +27,6 @@ Device/Smagribot/run.sh
 Device/Smagribot/out/
 
 TestResults/
+
+config/
+.env

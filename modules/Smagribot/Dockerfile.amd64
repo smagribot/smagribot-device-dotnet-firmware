@@ -1,0 +1,34 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build-env
+WORKDIR /app
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim
+WORKDIR /app
+COPY --from=build-env /app/out ./
+
+RUN useradd -ms /bin/bash moduleuser
+USER moduleuser
+
+ENV FirmwareDownloadPath="/tmp/smagribot/serial_firmware" \
+    ArduinoCliPath="/usr/bin/arduino-cli"
+
+RUN mkdir -p $FirmwareDownloadPath
+
+# Install arduino-cli
+# See https://github.com/arduino/arduino-cli/releases for releases and checksum
+RUN arduinocli_version=0.10.0 \
+    arduinocli_arch=Linux_64bit \
+    && curl -SL --output arduino-cli.tar.gz 'https://github.com/arduino/arduino-cli/releases/download/'$arduinocli_version'/arduino-cli_'$arduinocli_version'_'$arduinocli_arch'.tar.gz' \
+    && arduinocli_sha256='a3eab6cb28026a62d78210ff52b20bcc70b6a9d9e51e8b5d4af75e437bd8f03c ' \
+    && echo "$arduinocli_sha256 arduino-cli.tar.gz" | sha256sum -c - \
+    && mkdir -p /usr/share/arduino-cli \
+    && tar -ozxf arduino-cli.tar.gz -C /usr/share/arduino-cli \
+    && rm arduino-cli.tar.gz \
+    && ln -s /usr/share/arduino-cli/arduino-cli /usr/bin/arduino-cli
+
+ENTRYPOINT ["dotnet", "Smagribot.dll"]

@@ -1,0 +1,207 @@
+{
+  "$schema-template": "2.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "iottestcontainerreg472": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_iottestcontainerreg472",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_iottestcontainerreg472",
+                "address": "iottestcontainerreg472.azurecr.io"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "env": {
+              "SerialPortName": {
+                "value": "/dev/ttyACM0"
+              },
+              "SerialBaudRate": {
+                "value": "9600"
+              },
+              "FirmwareDownloadPath": {
+                "value": "/tmp/smagribot_serial_firmware"
+              },
+              "FQBN": {
+                "value": "arduino:avr:uno"
+              },
+              "ArduinoCliPath": {
+                "value": "/usr/bin/arduino-cli"
+              },
+              "BLOB_CONTAINERNAME": {
+                "value": "$BLOB_CONTAINERNAME"
+              },
+              "BLOB_CONNECTIONSTRING": {
+                "value": "$BLOB_CONNECTIONSTRING"
+              },
+              "IsEdgeDevice": {
+                "value": "true"
+              },
+              "LD_LIBRARY_PATH": {
+                "value": "/opt/vc/lib"
+              }
+            },
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "Camera": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Camera.debug}",
+              "createOptions": {
+                "HostConfig": {
+                  "Privileged": true,
+                  "Binds": [
+                    "/opt/vc:/opt/vc"
+                  ],
+                  "Devices": [
+                    {
+                      "PathOnHost": "/dev/vchiq",
+                      "PathInContainer": "/dev/vchiq",
+                      "CgroupPermissions": "rwm"
+                    }
+                  ],
+                  "env": {
+                    "LD_LIBRARY_PATH": {
+                      "value": "/opt/vc/lib"
+                    },
+                    "BLOB_CONTAINERNAME": {
+                      "value": "$BLOB_CONTAINERNAME"
+                    },
+                    "BLOB_CONNECTIONSTRING": {
+                      "value": "$BLOB_CONNECTIONSTRING"
+                    },
+                    "IsEdgeDevice": {
+                      "value": "true"
+                    }
+                  },
+                  "ExposedPorts": {
+                    "22/tcp": {}
+                  },
+                  "PortBindings": {
+                    "22/tcp": [
+                      {
+                        "HostPort": "9022"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "Smagribot": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Smagribot.debug}",
+              "createOptions": {
+                "HostConfig": {
+                  "Privileged": true,
+                  "Binds": [
+                    "/tmp/smagribot_serial_firmware:/home/pi/Downloads/smagribot_serial_firmware",
+                    "/dev/ttyACM0:/dev/ttyACM0"
+                  ],
+                  "Devices": [
+                    {
+                      "PathOnHost": "/dev/ttyACM0",
+                      "PathInContainer": "/dev/ttyACM0",
+                      "CgroupPermissions": "rwm"
+                    }
+                  ],
+                  "env": {
+                    "SerialPortName": {
+                      "value": "/dev/ttyACM0"
+                    },
+                    "SerialBaudRate": {
+                      "value": "9600"
+                    },
+                    "FirmwareDownloadPath": {
+                      "value": "/tmp/smagribot_serial_firmware"
+                    },
+                    "FQBN": {
+                      "value": "arduino:avr:uno"
+                    },
+                    "ArduinoCliPath": {
+                      "value": "/usr/bin/arduino-cli"
+                    },
+                    "IsEdgeDevice": {
+                      "value": "true"
+                    }
+                  },
+                  "ExposedPorts": {
+                    "22/tcp": {}
+                  },
+                  "PortBindings": {
+                    "22/tcp": [
+                      {
+                        "HostPort": "9022"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "routes": {
+          "SmagribotToIoTHub": "FROM /messages/modules/Smagribot/outputs/* INTO $upstream"
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    }
+  }
+}
